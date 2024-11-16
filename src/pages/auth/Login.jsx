@@ -1,13 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form, Input, Card } from "antd";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
+import { auth } from "../../firebase";
+import { passwordRules } from "../../utils/formFieldRules";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const { Item, useForm } = Form;
   const { Password } = Input;
   const [form] = useForm();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const handleFormSubmit = async (values) => {
+    try {
+      const { email, password } = values;
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+      toast.success("Logged in!");
+    } catch (error) {
+      console.log("Error in Login", error);
+      toast.error("Error in Login. Please try again later");
+    } finally {
+      setLoading(false);
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -30,13 +48,14 @@ const Login = () => {
         initialValues={{
           remember: true,
         }}
-        onFinish={onFinish}
+        onFinish={handleFormSubmit}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Item
           label="Email"
           name="email"
+          validateTrigger="submit"
           labelCol={{
             span: 5,
           }}
@@ -45,27 +64,20 @@ const Login = () => {
             { type: "email", message: "Please enter a valid email!" },
           ]}
         >
-          <Input />
+          <Input placeholder="Your email address" />
         </Item>
 
         <Item
           label="Password"
           name="password"
-          labelCol={{
-            span: 5,
-          }}
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
+          validateTrigger="submit"
+          rules={passwordRules}
         >
-          <Password />
+          <Password placeholder="Password (min. 8 chars)" />
         </Item>
 
         <Item label={null} style={{ textAlign: "center" }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Submit
           </Button>
         </Item>

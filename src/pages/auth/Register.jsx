@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Card } from "antd";
 import { toast } from "react-toastify";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+import {
+  confirmPasswordRules,
+  passwordRules,
+} from "../../utils/formFieldRules";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { Item, useForm } = Form;
   const { Password } = Input;
@@ -10,8 +18,11 @@ const Register = () => {
 
   const handleFormSubmit = async (values) => {
     try {
+      const { email, password } = values;
       setLoading(true);
+      await createUserWithEmailAndPassword(auth, email, password);
       toast.success("Sign up Successful!");
+      navigate("/");
     } catch (error) {
       console.log("Error in Sign up", error);
       toast.error(`Error in Sign up: ${error.message}`);
@@ -63,28 +74,7 @@ const Register = () => {
           label="Password"
           name="password"
           validateTrigger="submit"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-            {
-              min: 6,
-              message: "Password must be 6 characters long",
-            },
-            {
-              pattern: /[A-Z]/,
-              message: "Password must contain at least one uppercase letter.",
-            },
-            {
-              pattern: /\d/,
-              message: "Password must contain at least one numeric character.",
-            },
-            {
-              pattern: /[!@#$%^&*(),.?":{}|<>]/,
-              message: "Password must contain at least one special character.",
-            },
-          ]}
+          rules={passwordRules}
         >
           <Password placeholder="Password (min. 8 chars)" />
         </Item>
@@ -93,22 +83,7 @@ const Register = () => {
           label="Confirm Password"
           name="confirm"
           validateTrigger="submit"
-          rules={[
-            {
-              required: true,
-              message: "Please confirm your password!",
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("The two passwords do not match!")
-                );
-              },
-            }),
-          ]}
+          rules={confirmPasswordRules}
         >
           <Password placeholder="Confirm your password (min. 8 chars)" />
         </Item>
