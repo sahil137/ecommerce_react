@@ -4,11 +4,13 @@ import { Outlet } from "react-router-dom";
 
 const Home = () => {
   return (
-    <React.Fragment>
+    <div className="grid grid-rows-[auto_1fr] min-h-screen">
       <Header />
-      Home
-      <Outlet />
-    </React.Fragment>
+      <div className="flex items-center justify-center">
+        {/* All components replace the outlet */}
+        <Outlet />
+      </div>
+    </div>
   );
 };
 
