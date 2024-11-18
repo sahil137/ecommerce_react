@@ -8,6 +8,7 @@ import {
   passwordRules,
 } from "../../utils/formFieldRules";
 import { useNavigate } from "react-router-dom";
+import userService from "../../api/services/userService";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -18,9 +19,20 @@ const Register = () => {
 
   const handleFormSubmit = async (values) => {
     try {
-      const { email, password } = values;
+      const { email, password } = values; // Assuming the form also collects `name`
       setLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user; // Firebase user object
+
+      const userData = { email, uid: user.uid };
+
+      await userService.createUser(userData);
+
       toast.success("Sign up Successful!");
       navigate("/");
     } catch (error) {
@@ -30,6 +42,7 @@ const Register = () => {
       setLoading(false);
     }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };

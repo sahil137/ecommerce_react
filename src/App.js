@@ -8,7 +8,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import { Provider } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
-import store from "./store";
+import store from "./redux/store/index";
 
 // Importing Components and Pages
 import PublicRoutes from "./components/routes/PublicRoutes";
