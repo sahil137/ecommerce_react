@@ -7,7 +7,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../../firebase";
 
 const originalMenuItems = [
@@ -43,7 +43,7 @@ const originalMenuItems = [
 const Header = () => {
   const [current, setCurrent] = useState("home");
   const user = useSelector((store) => store?.user?.currentUser);
-  const navigate = useNavigate(); // Initialize the navigate hook
+  const navigate = useNavigate();
 
   const handleClick = (e) => {
     setCurrent(e.key);
@@ -64,7 +64,7 @@ const Header = () => {
     if (item.key === "SubMenu" && item.label === "User" && user) {
       return {
         ...item,
-        label: user.name || "User",
+        label: user?.name || user?.displayName || "User",
       };
     }
     return item;
