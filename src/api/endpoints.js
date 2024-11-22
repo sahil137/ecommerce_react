@@ -5,6 +5,7 @@ const endpoints = {
   user: {
     createUser: "/user/create",
     updateUser: "/user/update",
+    getCurrentUser: "/user/current-user-details",
   },
 };
 

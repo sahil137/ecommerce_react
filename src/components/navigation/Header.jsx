@@ -64,7 +64,7 @@ const Header = () => {
     if (item.key === "SubMenu" && item.label === "User" && user) {
       return {
         ...item,
-        label: user.name || "User",
+        label: user?.name || user?.displayName || "User",
       };
     }
     return item;
